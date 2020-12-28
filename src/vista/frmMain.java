@@ -9,9 +9,18 @@ import modelo.Alumno;
 import modelo.Docente;
 import modelo.Tipo;
 import controlador.ControladorAlumno;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -21,6 +30,8 @@ public class frmMain extends javax.swing.JFrame {
 
     static Alumno alumno;
     static Docente docente;
+    Date dt = new Date();
+    SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
     public frmMain() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -39,20 +50,30 @@ public class frmMain extends javax.swing.JFrame {
         long dias;
         try {
             Date f1= sd.parse(cad1);
-            Date f2=sd.parse(cad2);
+            Date f2=sd.parse(cad2
+            );
             Calendar c1=Calendar.getInstance();
             Calendar c2=Calendar.getInstance();
             //las fechas convertirlos a calendario
             c1.setTime(f1);
             c2.setTime(f2);
-            dias =(c2.getTimeInMillis()-c1.getTimeInMillis())/(10006060*24);
+        dias =(c2.getTimeInMillis()-c1.getTimeInMillis())/(1000*60*60*24);
         }catch(Exception ex){
             dias=0;
         }
         return (int)dias;
     }
-    Date dt = new Date();
-    SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
+    
+    public Image generarImagenCita(byte[] bytes) throws IOException {
+        BufferedImage imagen = null;
+        try {
+            InputStream in = new ByteArrayInputStream(bytes);
+            imagen = ImageIO.read(in);
+        } catch (Exception e) {
+        }
+        return imagen;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -65,7 +86,7 @@ public class frmMain extends javax.swing.JFrame {
         jDesktopPane1 = new javax.swing.JDesktopPane();
         VentanaEditarPerfil = new javax.swing.JInternalFrame();
         VentanaVerPerfil = new javax.swing.JInternalFrame();
-        jLabel1 = new javax.swing.JLabel();
+        img = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -112,7 +133,7 @@ public class frmMain extends javax.swing.JFrame {
         VentanaVerPerfil.setClosable(true);
         VentanaVerPerfil.setVisible(true);
 
-        jLabel1.setBorder(new javax.swing.border.MatteBorder(null));
+        img.setBorder(new javax.swing.border.MatteBorder(null));
 
         jLabel2.setText("Nombre:");
 
@@ -138,7 +159,7 @@ public class frmMain extends javax.swing.JFrame {
             VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(VentanaVerPerfilLayout.createSequentialGroup()
                 .addGap(45, 45, 45)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(img, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(52, 52, 52)
                 .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
@@ -217,7 +238,7 @@ public class frmMain extends javax.swing.JFrame {
                         .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
                             .addComponent(txttipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(img, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(VentanaVerPerfilLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -297,7 +318,11 @@ public class frmMain extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         VentanaVerPerfil.setVisible(true);
-
+        try {
+            img.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img.getWidth(), img.getHeight(), Image.SCALE_DEFAULT)));
+        } catch (IOException ex) {
+            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
         txtnombre.setText(alumno.getNombre());
         txtapellido.setText(alumno.getApellido());
         txtcorreo.setText(alumno.getCorreo());
@@ -306,8 +331,7 @@ public class frmMain extends javax.swing.JFrame {
         txtdni.setText("" + alumno.getDNI());
         txttipo.setText(VecTipo(alumno.getId_Tipo()));
         datefechnacimiento.setDate(alumno.getFecha_Nacimiento());
-        txtedad.setText("" + FechaDif(sd.format(dt),sd.format(alumno.getFecha_Nacimiento())));
-        System.out.println("Fecha"+ sd.format(alumno.getFecha_Nacimiento()));
+        txtedad.setText(""+(FechaDif(sd.format(alumno.getFecha_Nacimiento()),sd.format(dt)))/365);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -353,8 +377,8 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JInternalFrame VentanaEditarPerfil;
     private javax.swing.JInternalFrame VentanaVerPerfil;
     private com.toedter.calendar.JDateChooser datefechnacimiento;
+    private javax.swing.JLabel img;
     private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

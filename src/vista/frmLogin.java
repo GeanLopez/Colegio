@@ -88,6 +88,10 @@ public class frmLogin extends javax.swing.JFrame {
             }
         });
 
+        IngreseContraseña.setText("123456");
+
+        IngreseCorreo.setText("Josue@gmail.com");
+
         jLabel2.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
         jLabel2.setText("Ingrese su Correo:");
 
