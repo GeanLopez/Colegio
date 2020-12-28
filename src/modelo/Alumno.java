@@ -19,6 +19,10 @@ public class Alumno extends Persona {
         super(Nombre, Apellido, Correo, Contraseña);
     }
 
+    public Alumno(int Id_Alumno, String Nombre, String Apellido, String Correo, int Telefono, String Sexo, int DNI, int Id_Tipo, String Contraseña, Date Fecha_Nacimiento, byte[] Avatar) {
+        super(Nombre, Apellido, Correo, Telefono, Sexo, DNI, Id_Tipo, Contraseña, Fecha_Nacimiento, Avatar);
+        this.Id_Alumno = Id_Alumno;
+    }
     
 
     public int getId_Alumno() {

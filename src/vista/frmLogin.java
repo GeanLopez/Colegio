@@ -5,8 +5,12 @@
  */
 package vista;
 
+import controlador.ControladorAlumno;
+import controlador.ControladorDocente;
 import controlador.ControladorLogin;
 import josueemg.SimpleAlert;
+import modelo.Alumno;
+import modelo.Docente;
 
 /**
  *
@@ -15,12 +19,14 @@ import josueemg.SimpleAlert;
 public class frmLogin extends javax.swing.JFrame {
 
     ControladorLogin cl = new ControladorLogin();
-
+    ControladorAlumno ca = new ControladorAlumno();
+    ControladorDocente cd = new ControladorDocente();
     /**
      * Creates new form frmLogin
      */
     public frmLogin() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -43,7 +49,8 @@ public class frmLogin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1500, 800));
+        setPreferredSize(new java.awt.Dimension(460, 360));
+        setSize(new java.awt.Dimension(300, 300));
         getContentPane().setLayout(null);
 
         jPanel1.setBackground(new java.awt.Color(51, 204, 255));
@@ -64,7 +71,7 @@ public class frmLogin extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
         );
 
         getContentPane().add(jPanel1);
@@ -109,7 +116,7 @@ public class frmLogin extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(117, Short.MAX_VALUE)
+                .addContainerGap(106, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(IngreseCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
@@ -129,18 +136,26 @@ public class frmLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesiónActionPerformed
-        if (cl.LoginAlumno(IngreseCorreo.getText(), IngreseContraseña.getText())) {
-            frmMain frmM = new frmMain();
-            frmM.setVisible(true);
-            this.dispose();
-        } else if (cl.LoginDocente(IngreseCorreo.getText(), IngreseContraseña.getText())) {
-            frmMain frmM = new frmMain();
-            frmM.setVisible(true);
-            this.dispose();
-        } else {
-            SimpleAlert.showMessaje(null, true, "Datos Erroneos o Falta Datos ");
+        if (IngreseContraseña.getText().equals("") || IngreseCorreo.equals("")) {
+            SimpleAlert.showMessaje(null, true, "Datos Erroneos o Falta Datos");
         }
-
+        else {
+           if (cl.LoginAlumno(IngreseCorreo.getText(), IngreseContraseña.getText())) {
+                Alumno a = ca.obtenerAlumno(IngreseCorreo.getText());
+                frmMain.alumno = a;
+                frmMain frmM = new frmMain();
+                frmM.setVisible(true);
+                this.dispose();
+            } else if (cl.LoginDocente(IngreseCorreo.getText(), IngreseContraseña.getText())) {
+                Docente d = cd.obtenerDocente(IngreseCorreo.getText());
+                frmMain.docente = d;
+                frmMain frmM = new frmMain();
+                frmM.setVisible(true);
+                this.dispose();
+            } else {
+                SimpleAlert.showMessaje(null, true, "Datos Erroneos o Falta Datos ");
+            } 
+        }  
     }//GEN-LAST:event_btnIniciarSesiónActionPerformed
 
     /**

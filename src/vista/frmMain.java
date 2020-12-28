@@ -5,17 +5,20 @@
  */
 package vista;
 
+import modelo.Alumno;
+import modelo.Docente;
+
 /**
  *
  * @author jampi
  */
 public class frmMain extends javax.swing.JFrame {
 
-    /**
-     * Creates new form frmMain
-     */
+    static Alumno alumno;
+    static Docente docente;
     public frmMain() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**

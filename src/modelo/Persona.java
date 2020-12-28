@@ -32,6 +32,20 @@ public abstract class Persona {
         this.Contraseña = Contraseña;
     }
 
+    public Persona(String Nombre, String Apellido, String Correo, int Telefono, String Sexo, int DNI, int Id_Tipo, String Contraseña, Date Fecha_Nacimiento, byte[] Avatar) {
+        this.Nombre = Nombre;
+        this.Apellido = Apellido;
+        this.Correo = Correo;
+        this.Telefono = Telefono;
+        this.Sexo = Sexo;
+        this.DNI = DNI;
+        this.Id_Tipo = Id_Tipo;
+        this.Contraseña = Contraseña;
+        this.Fecha_Nacimiento = Fecha_Nacimiento;
+        this.Avatar = Avatar;
+    }
+    
+    
     public String getNombre() {
         return Nombre;
     }

@@ -50,5 +50,32 @@ public class ControladorAlumno {
         }
 
     }
+    
+    public Alumno obtenerAlumno(String correo) {
+        Alumno a = null;
+        Connection conn = null;
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "select * from alumno where correo = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, correo);
+            //esa consulta se lleva a memoria
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                a = new Alumno(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6), rs.getInt(7), rs.getInt(8), rs.getString(9), rs.getDate(10), rs.getBytes(11));
+            }
+            //comenzar a leer filax fila
+        } catch (Exception ex) {
+            SimpleAlert.showMessaje(null, true, "Error al Registar Alumno");
+        } finally {
+            try {
 
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+        return a;
+    }
 }

@@ -7,6 +7,7 @@ package controlador;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import josueemg.SimpleAlert;
 import modelo.Docente;
 import util.MySQLConexion;
@@ -46,5 +47,32 @@ public class ControladorDocente {
             }
         }
 
+    }
+    public Docente obtenerDocente(String correo) {
+       Docente d = null;
+        Connection conn = null;
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "select * from docente where correo = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, correo);
+            //esa consulta se lleva a memoria
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                d = new Docente(rs.getInt(1), rs.getInt(2),rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getDate(11), rs.getBytes(12));
+            }
+            //comenzar a leer filax fila
+        } catch (Exception ex) {
+            SimpleAlert.showMessaje(null, true, "Error al Registar Alumno");
+        } finally {
+            try {
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+        return d;
     }
 }
