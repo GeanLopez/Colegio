@@ -14,8 +14,9 @@ public class Docente extends Persona {
     private int Id_Docente;
     private int Id_Especialidad;
 
-    public Docente(String Nombre, String Apellido, String Correo, String Contraseña) {
+    public Docente(int Id_Especialidad, String Nombre, String Apellido, String Correo, String Contraseña) {
         super(Nombre, Apellido, Correo, Contraseña);
+        this.Id_Especialidad = Id_Especialidad;
     }
 
     public int getId_Docente() {
