@@ -8,37 +8,38 @@ package controlador;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import josueemg.SimpleAlert;
-import static josueemg.SimpleAlert.parent;
-import util.MySQLConexion;
 import modelo.Alumno;
+import util.MySQLConexion;
 
 /**
  *
  * @author jampi
  */
-public class ControladorAlumno {
+public class ControladorLogin {
 
-    public void CrearAlumno(Alumno a) {
+    public boolean Login(String Correo, String Contraseña) {
         Connection conn = null;
+        String contraseña = "";
+        boolean estado = false;
         try {
             conn = MySQLConexion.getConexion();
-            String sql = "insert into Alumno (nombre, apellido,correo,id_tipo,contraseña) \n"
-                    + "values (?,?,?,?,?)";
+            String sql = "select contraseña from Alumno where correo=?";
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setString(1, a.getNombre());
-            st.setString(2, a.getApellido());
-            st.setString(3, a.getCorreo());
-            st.setInt(4, 1);
-            st.setString(5, a.getContraseña());
-
+            st.setString(1, Correo);
+            ResultSet rs = st.executeQuery();//Devuelve metodo resulset obtener la seleccion en memoria
+            if (rs.next()) {
+                contraseña = rs.getString(1);// Guardo la contraseña en la base de datos a memoria en la variable contraseña
+            }
+            if (Contraseña.equals(contraseña)) {
+                estado = true;
+            }
             //esa consulta se lleva a memoria
-            st.executeUpdate();
+            st.executeQuery();// Obtener Datos
+          //  st.executeUpdate();//Actualizar Datos
             //comenzar a leer filax fila
         } catch (Exception ex) {
-            SimpleAlert.showMessaje(null, true, "Error al Registar Alumno");
+            ex.printStackTrace();
         } finally {
             try {
 
@@ -48,7 +49,7 @@ public class ControladorAlumno {
             } catch (Exception e2) {
             }
         }
-
+        return estado;
     }
 
 }
