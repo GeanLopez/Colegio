@@ -14,6 +14,10 @@ public class Docente extends Persona {
     private int Id_Docente;
     private int Id_Especialidad;
 
+    public Docente(String Nombre, String Apellido, String Correo, String Contraseña) {
+        super(Nombre, Apellido, Correo, Contraseña);
+    }
+
     public int getId_Docente() {
         return Id_Docente;
     }

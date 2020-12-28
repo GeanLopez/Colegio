@@ -15,6 +15,12 @@ public class Alumno extends Persona {
 
     private int Id_Alumno;
 
+    public Alumno(String Nombre, String Apellido, String Correo, String Contraseña) {
+        super(Nombre, Apellido, Correo, Contraseña);
+    }
+
+    
+
     public int getId_Alumno() {
         return Id_Alumno;
     }

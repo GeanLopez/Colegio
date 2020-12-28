@@ -11,9 +11,9 @@ import java.sql.Date;
  *
  * @author jampi
  */
-public class Persona {
+public abstract class Persona {
 
-        private String Nombre;
+    private String Nombre;
     private String Apellido;
     private String Correo;
     private int Telefono;
@@ -23,8 +23,14 @@ public class Persona {
     private String Contraseña;
     private Date Fecha_Nacimiento;
     private byte[] Avatar;
-    
-   
+
+    public Persona(String Nombre, String Apellido, String Correo, String Contraseña) {
+        this.Nombre = Nombre;
+        this.Apellido = Apellido;
+        this.Correo = Correo;
+
+        this.Contraseña = Contraseña;
+    }
 
     public String getNombre() {
         return Nombre;
@@ -105,5 +111,5 @@ public class Persona {
     public void setAvatar(byte[] Avatar) {
         this.Avatar = Avatar;
     }
-    
+
 }
