@@ -32,6 +32,7 @@ public class frmMain extends javax.swing.JFrame {
     static Docente docente;
     Date dt = new Date();
     SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
+    
     public frmMain() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -43,8 +44,12 @@ public class frmMain extends javax.swing.JFrame {
         String id[] = {"Elegir", "Estudiante", "Docente", "Administrador"};
         return id[id_tipo];
     }
-//Restamos dos Fechas para obtener un entero
+    //Restamos dos Fechas para obtener un entero
 
+    public void closeIframes() {
+        this.VentanaEditarPerfil.setVisible(false);
+        this.VentanaEditarPerfil.setVisible(false);
+    }
     public int FechaDif(String cad1, String cad2){
         //primero las cadenas convertirlos a fechas
         long dias;
@@ -116,6 +121,7 @@ public class frmMain extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         VentanaEditarPerfil.setClosable(true);
+        VentanaEditarPerfil.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         VentanaEditarPerfil.setVisible(true);
 
         javax.swing.GroupLayout VentanaEditarPerfilLayout = new javax.swing.GroupLayout(VentanaEditarPerfil.getContentPane());
@@ -131,6 +137,7 @@ public class frmMain extends javax.swing.JFrame {
 
         VentanaVerPerfil.setBackground(new java.awt.Color(255, 255, 255));
         VentanaVerPerfil.setClosable(true);
+        VentanaVerPerfil.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         VentanaVerPerfil.setVisible(true);
 
         img.setBorder(new javax.swing.border.MatteBorder(null));
@@ -290,6 +297,11 @@ public class frmMain extends javax.swing.JFrame {
         jMenu1.add(jMenuItem3);
 
         jMenuItem1.setText("Cerrar Sesión");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
@@ -316,8 +328,7 @@ public class frmMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        VentanaVerPerfil.setVisible(true);
+    void verPerfil() {
         try {
             img.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img.getWidth(), img.getHeight(), Image.SCALE_DEFAULT)));
         } catch (IOException ex) {
@@ -332,11 +343,25 @@ public class frmMain extends javax.swing.JFrame {
         txttipo.setText(VecTipo(alumno.getId_Tipo()));
         datefechnacimiento.setDate(alumno.getFecha_Nacimiento());
         txtedad.setText(""+(FechaDif(sd.format(alumno.getFecha_Nacimiento()),sd.format(dt)))/365);
+    }
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        closeIframes();
+        VentanaVerPerfil.setVisible(true);
+        verPerfil();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        closeIframes();
         VentanaEditarPerfil.setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        frmLogin f = new frmLogin();
+        f.setVisible(true);
+        docente = null;
+        alumno = null;
+        this.dispose();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
