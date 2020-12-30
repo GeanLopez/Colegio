@@ -5,6 +5,7 @@
  */
 package controlador;
 
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,8 +49,9 @@ public class ControladorDocente {
         }
 
     }
+
     public Docente obtenerDocente(String correo) {
-       Docente d = null;
+        Docente d = null;
         Connection conn = null;
         try {
             conn = MySQLConexion.getConexion();
@@ -59,7 +61,7 @@ public class ControladorDocente {
             //esa consulta se lleva a memoria
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
-                d = new Docente(rs.getInt(1), rs.getInt(2),rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getDate(11), rs.getBytes(12));
+                d = new Docente(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getDate(11), rs.getBytes(12));
             }
             //comenzar a leer filax fila
         } catch (Exception ex) {
@@ -75,4 +77,85 @@ public class ControladorDocente {
         }
         return d;
     }
+
+    public void EditarAlumno(Docente d) {
+        Connection conn = null;
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "update Docente set nombre=?, apellido=?,correo=?,telefono=?,dni=?,sexo=?,Fecha_Nacimiento=? where id_Docente=?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, d.getNombre());
+            st.setString(2, d.getApellido());
+            st.setString(3, d.getCorreo());
+            st.setInt(4, d.getTelefono());
+            st.setString(5, d.getSexo());
+            st.setInt(6, d.getDNI());
+            st.setDate(7, d.getFecha_Nacimiento());
+            //esa consulta se lleva a memoria
+            st.executeUpdate();
+            //comenzar a leer filax fila
+        } catch (Exception ex) {
+            SimpleAlert.showMessaje(null, true, "DNI o Correo Existentes");
+        } finally {
+            try {
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+    }
+
+    public void CambiarContraseña(String Contraseña) {
+        Connection conn = null;
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "update Docente set contraseña=? where id_Docente=?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, Contraseña);
+            //esa consulta se lleva a memoria
+            st.executeUpdate();
+            //comenzar a leer filax fila
+        } catch (Exception ex) {
+            SimpleAlert.showMessaje(null, true, "Ingrese Bien datos Mierda");
+        } finally {
+            try {
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+    }
+    /*Subir Imagen*/
+    public boolean subirFoto(FileInputStream foto, int id) {
+        boolean state = true;
+        Connection conn = null;
+
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "update Docente set avatar = ? where id_Docente =? ";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setBinaryStream(1, foto);
+            st.setInt(2, id);
+            st.executeUpdate();
+            //llenar el arraylist con la clase entidad
+        } catch (Exception ex) {
+            SimpleAlert.showMessaje(null, true, "Eliga una foto mierda");
+            state = false;
+        } finally {
+            try {
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+        return state;
+    }
+    
 }
+

@@ -31,13 +31,21 @@ public class frmMain extends javax.swing.JFrame {
     static Alumno alumno;
     static Docente docente;
     Date dt = new Date();
-    SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
-    
+    SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+
     public frmMain() {
         initComponents();
+        /*if (alumno == null || docente == null) {
+            frmLogin fl = new frmLogin();
+             this.dispose();
+             fl.setVisible(true);
+           
+        }*/
+        System.out.println("Hoa"+alumno);
         this.setLocationRelativeTo(null);
         VentanaVerPerfil.setVisible(false);
         VentanaEditarPerfil.setVisible(false);
+
     }
 
     public String VecTipo(int id_tipo) {
@@ -50,25 +58,26 @@ public class frmMain extends javax.swing.JFrame {
         this.VentanaEditarPerfil.setVisible(false);
         this.VentanaEditarPerfil.setVisible(false);
     }
-    public int FechaDif(String cad1, String cad2){
+
+    public int FechaDif(String cad1, String cad2) {
         //primero las cadenas convertirlos a fechas
         long dias;
         try {
-            Date f1= sd.parse(cad1);
-            Date f2=sd.parse(cad2
+            Date f1 = sd.parse(cad1);
+            Date f2 = sd.parse(cad2
             );
-            Calendar c1=Calendar.getInstance();
-            Calendar c2=Calendar.getInstance();
+            Calendar c1 = Calendar.getInstance();
+            Calendar c2 = Calendar.getInstance();
             //las fechas convertirlos a calendario
             c1.setTime(f1);
             c2.setTime(f2);
-        dias =(c2.getTimeInMillis()-c1.getTimeInMillis())/(1000*60*60*24);
-        }catch(Exception ex){
-            dias=0;
+            dias = (c2.getTimeInMillis() - c1.getTimeInMillis()) / (1000 * 60 * 60 * 24);
+        } catch (Exception ex) {
+            dias = 0;
         }
-        return (int)dias;
+        return (int) dias;
     }
-    
+
     public Image generarImagenCita(byte[] bytes) throws IOException {
         BufferedImage imagen = null;
         try {
@@ -78,7 +87,25 @@ public class frmMain extends javax.swing.JFrame {
         }
         return imagen;
     }
-    
+    //Editar Perfil
+
+    void EditarPerfil() {
+        try {
+            img1.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img1.getWidth(), img1.getHeight(), Image.SCALE_DEFAULT)));
+        } catch (IOException ex) {
+            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        txtnombre1.setText(alumno.getNombre());
+        txtapellido1.setText(alumno.getApellido());
+        txtcorreo1.setText(alumno.getCorreo());
+        txttelefono1.setText("" + alumno.getTelefono());
+        txtsexo1.setText(alumno.getSexo());
+        txtdni1.setText("" + alumno.getDNI());
+        txttipo1.setText(VecTipo(alumno.getId_Tipo()));
+        datefechnacimiento1.setDate(alumno.getFecha_Nacimiento());
+        txtedad1.setText("" + (FechaDif(sd.format(alumno.getFecha_Nacimiento()), sd.format(dt))) / 365);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -90,6 +117,28 @@ public class frmMain extends javax.swing.JFrame {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
         VentanaEditarPerfil = new javax.swing.JInternalFrame();
+        jLabel11 = new javax.swing.JLabel();
+        txtedad1 = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        datefechnacimiento1 = new com.toedter.calendar.JDateChooser();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        txtnombre1 = new javax.swing.JTextField();
+        txtapellido1 = new javax.swing.JTextField();
+        txtcorreo1 = new javax.swing.JTextField();
+        txttelefono1 = new javax.swing.JTextField();
+        txtsexo1 = new javax.swing.JTextField();
+        img1 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        txtdni1 = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        txttipo1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        btnEditarDatos = new javax.swing.JButton();
         VentanaVerPerfil = new javax.swing.JInternalFrame();
         img = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -120,19 +169,157 @@ public class frmMain extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        VentanaEditarPerfil.setBackground(new java.awt.Color(255, 255, 255));
         VentanaEditarPerfil.setClosable(true);
         VentanaEditarPerfil.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         VentanaEditarPerfil.setVisible(true);
+
+        jLabel11.setText("DNI:");
+
+        jLabel12.setText("Tipo Usuario:");
+
+        jLabel13.setText("Fecha de Nacimiento:");
+
+        jLabel14.setText("Edad:");
+
+        img1.setBorder(new javax.swing.border.MatteBorder(null));
+
+        jLabel15.setText("Nombre:");
+
+        jLabel16.setText("Apellido:");
+
+        jLabel17.setText("Correo:");
+
+        jLabel18.setText("Telefono:");
+
+        jLabel19.setText("Sexo:");
+
+        jButton1.setText("Cambiar foto");
+
+        jButton2.setText("Cambiar Contraseña");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        btnEditarDatos.setText("Editar Datos");
+        btnEditarDatos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarDatosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout VentanaEditarPerfilLayout = new javax.swing.GroupLayout(VentanaEditarPerfil.getContentPane());
         VentanaEditarPerfil.getContentPane().setLayout(VentanaEditarPerfilLayout);
         VentanaEditarPerfilLayout.setHorizontalGroup(
             VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 724, Short.MAX_VALUE)
+            .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1))
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(img1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(jButton2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
+                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addComponent(jLabel19)
+                        .addGap(111, 111, 111)
+                        .addComponent(txtsexo1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txttipo1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                            .addComponent(jLabel11)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtdni1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel18)
+                                .addComponent(jLabel17))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtcorreo1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txttelefono1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel15)
+                                .addComponent(jLabel16))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtnombre1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtapellido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VentanaEditarPerfilLayout.createSequentialGroup()
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel13)
+                                .addComponent(jLabel14))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtedad1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(datefechnacimiento1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(99, 99, 99))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VentanaEditarPerfilLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnEditarDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(180, 180, 180))
         );
         VentanaEditarPerfilLayout.setVerticalGroup(
             VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addComponent(img1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(jButton1))
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                                .addComponent(txtnombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel16)
+                                    .addComponent(txtapellido1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel17)
+                                    .addComponent(txtcorreo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel18)
+                                    .addComponent(txttelefono1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel19)
+                                    .addComponent(txtsexo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel11)
+                                    .addComponent(txtdni1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel12)
+                                    .addComponent(txttipo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(datefechnacimiento1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtedad1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14)
+                            .addComponent(jButton2))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addComponent(btnEditarDatos)
+                .addGap(22, 22, 22))
         );
 
         VentanaVerPerfil.setBackground(new java.awt.Color(255, 255, 255));
@@ -202,15 +389,11 @@ public class frmMain extends javax.swing.JFrame {
                                     .addComponent(txtapellido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(VentanaVerPerfilLayout.createSequentialGroup()
                                 .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                                 .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(VentanaVerPerfilLayout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                                        .addComponent(txtedad, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(VentanaVerPerfilLayout.createSequentialGroup()
-                                        .addGap(62, 62, 62)
-                                        .addComponent(datefechnacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))))))
-                .addContainerGap(74, Short.MAX_VALUE))
+                                    .addComponent(txtedad, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(datefechnacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(137, Short.MAX_VALUE))
         );
         VentanaVerPerfilLayout.setVerticalGroup(
             VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,7 +440,7 @@ public class frmMain extends javax.swing.JFrame {
                 .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(txtedad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jDesktopPane1.setLayer(VentanaEditarPerfil, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -342,7 +525,7 @@ public class frmMain extends javax.swing.JFrame {
         txtdni.setText("" + alumno.getDNI());
         txttipo.setText(VecTipo(alumno.getId_Tipo()));
         datefechnacimiento.setDate(alumno.getFecha_Nacimiento());
-        txtedad.setText(""+(FechaDif(sd.format(alumno.getFecha_Nacimiento()),sd.format(dt)))/365);
+        txtedad.setText("" + (FechaDif(sd.format(alumno.getFecha_Nacimiento()), sd.format(dt))) / 365);
     }
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         closeIframes();
@@ -353,6 +536,7 @@ public class frmMain extends javax.swing.JFrame {
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         closeIframes();
         VentanaEditarPerfil.setVisible(true);
+        EditarPerfil();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -362,6 +546,15 @@ public class frmMain extends javax.swing.JFrame {
         alumno = null;
         this.dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        dgCambiarContraseña cc = new dgCambiarContraseña(this, true);
+        cc.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnEditarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarDatosActionPerformed
+        txtnombre1.getText();
+    }//GEN-LAST:event_btnEditarDatosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -401,10 +594,24 @@ public class frmMain extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JInternalFrame VentanaEditarPerfil;
     private javax.swing.JInternalFrame VentanaVerPerfil;
+    private javax.swing.JButton btnEditarDatos;
     private com.toedter.calendar.JDateChooser datefechnacimiento;
+    private com.toedter.calendar.JDateChooser datefechnacimiento1;
     private javax.swing.JLabel img;
+    private javax.swing.JLabel img1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -421,12 +628,20 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JTextField txtapellido;
+    private javax.swing.JTextField txtapellido1;
     private javax.swing.JTextField txtcorreo;
+    private javax.swing.JTextField txtcorreo1;
     private javax.swing.JTextField txtdni;
+    private javax.swing.JTextField txtdni1;
     private javax.swing.JTextField txtedad;
+    private javax.swing.JTextField txtedad1;
     private javax.swing.JTextField txtnombre;
+    private javax.swing.JTextField txtnombre1;
     private javax.swing.JTextField txtsexo;
+    private javax.swing.JTextField txtsexo1;
     private javax.swing.JTextField txttelefono;
+    private javax.swing.JTextField txttelefono1;
     private javax.swing.JTextField txttipo;
+    private javax.swing.JTextField txttipo1;
     // End of variables declaration//GEN-END:variables
 }
