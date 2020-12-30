@@ -27,6 +27,10 @@ public class Docente extends Persona {
         this.Id_Especialidad = Id_Especialidad;
     }
 
+    public Docente() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
     public int getId_Docente() {
         return Id_Docente;

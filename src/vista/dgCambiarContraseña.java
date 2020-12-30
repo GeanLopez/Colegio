@@ -5,18 +5,27 @@
  */
 package vista;
 
+import controlador.ControladorAlumno;
+import controlador.ControladorDocente;
+import josueemg.SimpleAlert;
+import modelo.Alumno;
+import modelo.Docente;
+
 /**
  *
  * @author Jean Pierre
  */
 public class dgCambiarContraseña extends javax.swing.JDialog {
 
-    /**
-     * Creates new form dgCambiarContraseña
-     */
+    controlador.ControladorAlumno ca = new ControladorAlumno();
+    controlador.ControladorDocente cd = new ControladorDocente();
+    static Alumno alumno;
+    static Docente docente;
+
     public dgCambiarContraseña(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -30,8 +39,8 @@ public class dgCambiarContraseña extends javax.swing.JDialog {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        txtContraseñaActual = new javax.swing.JTextField();
+        txtContraseñaNueva = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -42,6 +51,11 @@ public class dgCambiarContraseña extends javax.swing.JDialog {
         jLabel2.setText("Nueva Contraseña");
 
         jButton1.setText("Cambiar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Cerrar");
 
@@ -62,8 +76,8 @@ public class dgCambiarContraseña extends javax.swing.JDialog {
                             .addComponent(jLabel2))
                         .addGap(46, 46, 46)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtContraseñaNueva, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtContraseñaActual, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(66, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -72,11 +86,11 @@ public class dgCambiarContraseña extends javax.swing.JDialog {
                 .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtContraseñaActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtContraseñaNueva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -86,6 +100,27 @@ public class dgCambiarContraseña extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (alumno != null) {
+            if (alumno.getContraseña().equals(txtContraseñaActual.getText())) {
+                ca.CambiarContraseña(txtContraseñaNueva.getText(), alumno.getId_Alumno());
+                SimpleAlert.showMessaje(null, true, "La contraseña se cambió correctamente");
+                this.dispose();
+            } else {
+                SimpleAlert.showMessaje(null, true, "La contraseña actual no coincide con la base de datos");
+            }
+        } else {
+            if (docente.getContraseña().equals(txtContraseñaActual.getText())) {
+                cd.CambiarContraseña(txtContraseñaNueva.getText(), docente.getId_Docente());
+                SimpleAlert.showMessaje(null, true, "La contraseña se cambió correctamente");
+                this.dispose();
+            } else {
+                SimpleAlert.showMessaje(null, true, "La contraseña actual no coincide con la base de datos");
+            }
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -134,7 +169,7 @@ public class dgCambiarContraseña extends javax.swing.JDialog {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField txtContraseñaActual;
+    private javax.swing.JTextField txtContraseñaNueva;
     // End of variables declaration//GEN-END:variables
 }

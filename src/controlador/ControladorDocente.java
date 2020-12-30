@@ -7,6 +7,7 @@ package controlador;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import josueemg.SimpleAlert;
@@ -78,7 +79,7 @@ public class ControladorDocente {
         return d;
     }
 
-    public void EditarAlumno(Docente d) {
+    public void EditarDocente(Docente d, int id) {
         Connection conn = null;
         try {
             conn = MySQLConexion.getConexion();
@@ -90,7 +91,8 @@ public class ControladorDocente {
             st.setInt(4, d.getTelefono());
             st.setString(5, d.getSexo());
             st.setInt(6, d.getDNI());
-            st.setDate(7, d.getFecha_Nacimiento());
+            st.setDate(7, (Date) d.getFecha_Nacimiento());
+            st.setInt(8, id);
             //esa consulta se lleva a memoria
             st.executeUpdate();
             //comenzar a leer filax fila
@@ -107,13 +109,14 @@ public class ControladorDocente {
         }
     }
 
-    public void CambiarContraseña(String Contraseña) {
+    public void CambiarContraseña(String Contraseña, int idDocente) {
         Connection conn = null;
         try {
             conn = MySQLConexion.getConexion();
             String sql = "update Docente set contraseña=? where id_Docente=?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, Contraseña);
+            st.setInt(2, idDocente);
             //esa consulta se lleva a memoria
             st.executeUpdate();
             //comenzar a leer filax fila

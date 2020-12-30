@@ -9,9 +9,13 @@ import modelo.Alumno;
 import modelo.Docente;
 import modelo.Tipo;
 import controlador.ControladorAlumno;
+import controlador.ControladorDocente;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -21,6 +25,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import josueemg.SimpleAlert;
 
 /**
  *
@@ -32,16 +40,21 @@ public class frmMain extends javax.swing.JFrame {
     static Docente docente;
     Date dt = new Date();
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    ControladorAlumno ca = new ControladorAlumno();
+    ControladorDocente cd = new ControladorDocente();
 
     public frmMain() {
         initComponents();
+        txtapellido.setEditable(false);
+        txtcorreo.setEditable(false);
+        txtnombre.setEditable(false); // Falta completar
         /*if (alumno == null || docente == null) {
             frmLogin fl = new frmLogin();
              this.dispose();
              fl.setVisible(true);
            
         }*/
-        System.out.println("Hoa"+alumno);
+        System.out.println("Hoa" + alumno);
         this.setLocationRelativeTo(null);
         VentanaVerPerfil.setVisible(false);
         VentanaEditarPerfil.setVisible(false);
@@ -195,6 +208,11 @@ public class frmMain extends javax.swing.JFrame {
         jLabel19.setText("Sexo:");
 
         jButton1.setText("Cambiar foto");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Cambiar Contraseña");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -313,10 +331,11 @@ public class frmMain extends javax.swing.JFrame {
                             .addComponent(datefechnacimiento1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtedad1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel14)
-                            .addComponent(jButton2))))
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtedad1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButton2)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(btnEditarDatos)
                 .addGap(22, 22, 22))
@@ -440,7 +459,7 @@ public class frmMain extends javax.swing.JFrame {
                 .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(txtedad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         jDesktopPane1.setLayer(VentanaEditarPerfil, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -548,13 +567,118 @@ public class frmMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        dgCambiarContraseña cc = new dgCambiarContraseña(this, true);
-        cc.setVisible(true);
+        if (alumno != null) {
+            dgCambiarContraseña.alumno = alumno;
+            dgCambiarContraseña cc = new dgCambiarContraseña(this, true);
+            cc.setVisible(true);
+            alumno = ca.obtenerAlumno(txtcorreo1.getText());
+        } else {
+            dgCambiarContraseña.docente = docente;
+            dgCambiarContraseña cc = new dgCambiarContraseña(this, true);
+            cc.setVisible(true);
+            docente = cd.obtenerDocente(txtcorreo1.getText());
+        }
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    /*private static java.sql.Date convert(java.util.Date uDate) {
+        java.sql.Date sDate = new java.sql.Date(uDate.getTime());
+        return sDate;
+    }*/
+
     private void btnEditarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarDatosActionPerformed
-        txtnombre1.getText();
+        if (alumno != null) {
+            Alumno a = new Alumno();
+            a.setNombre(txtnombre1.getText());
+            a.setApellido(txtapellido1.getText());
+            a.setCorreo(txtcorreo1.getText());
+            a.setTelefono(Integer.parseInt(txttelefono1.getText()));
+            a.setSexo(txtsexo1.getText());
+            a.setDNI(Integer.parseInt(txtdni1.getText()));
+            a.setFecha_Nacimiento(new java.sql.Date(datefechnacimiento1.getDate().getTime()));
+            ca.EditarAlumno(a, alumno.getId_Alumno());
+            alumno = ca.obtenerAlumno(txtcorreo1.getText());
+        } else {
+            Docente d = new Docente();
+            d.setNombre(txtnombre1.getText());
+            d.setApellido(txtapellido1.getText());
+            d.setCorreo(txtcorreo1.getText());
+            d.setTelefono(Integer.parseInt(txttelefono1.getText()));
+            d.setSexo(txtsexo1.getText());
+            d.setDNI(Integer.parseInt(txtdni1.getText()));
+            d.setFecha_Nacimiento(new java.sql.Date(datefechnacimiento1.getDate().getTime()));
+            cd.EditarDocente(d, docente.getId_Docente());
+            docente = cd.obtenerDocente(txtcorreo1.getText());
+        }
+
     }//GEN-LAST:event_btnEditarDatosActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        if (alumno != null) {
+            JFileChooser archivo = new JFileChooser();
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de archivos JPEG(*.jpg;*jpeg)", "jpg", "jpeg");
+            archivo.setFileFilter(filtro);
+            archivo.setDialogTitle("Subir foto de perfil"); 
+            int ventana = archivo.showOpenDialog(null);
+            if (ventana == JFileChooser.APPROVE_OPTION) {
+                File file = archivo.getSelectedFile();
+                if (file.getName().endsWith("jpg") || file.getName().endsWith("jpeg")) {
+                    String rutaName = file.getPath();
+                    try {
+                        FileInputStream archivoFoto = new FileInputStream(rutaName);
+                        if (ca.subirFoto(archivoFoto, alumno.getId_Alumno())) {
+                            Image foto = getToolkit().getImage(String.valueOf(file));
+                            foto = foto.getScaledInstance(img1.getWidth(), img1.getHeight(), Image.SCALE_DEFAULT);
+                            img1.setIcon(new ImageIcon(foto));
+                            img.setIcon(new ImageIcon(foto));
+                            SimpleAlert.showMessaje(null, true, "La foto se ha subido con exito");
+                        } else {
+                            SimpleAlert.showMessaje(null, true, "La foto no se ha subido");
+                        }
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    SimpleAlert.showMessaje(null, true, "Archivo no soportado");
+                }
+
+            }
+            alumno = ca.obtenerAlumno(txtcorreo1.getText());
+        }
+        else {
+           JFileChooser archivo = new JFileChooser();
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Formatos de archivos JPEG(*.jpg;*jpeg)", "jpg", "jpeg");
+            archivo.setFileFilter(filtro);
+            archivo.setDialogTitle("Subir foto de perfil");
+            int ventana = archivo.showOpenDialog(null);
+            if (ventana == JFileChooser.APPROVE_OPTION) {
+                File file = archivo.getSelectedFile();
+                if (file.getName().endsWith("jpg") || file.getName().endsWith("jpeg")) {
+                    String rutaName = file.getPath();
+                    try {
+                        FileInputStream archivoFoto = new FileInputStream(rutaName);
+                        if (cd.subirFoto(archivoFoto, docente.getId_Docente())) {
+                            Image foto = getToolkit().getImage(String.valueOf(file));
+                            foto = foto.getScaledInstance(img1.getWidth(), img1.getHeight(), Image.SCALE_DEFAULT);
+                            img1.setIcon(new ImageIcon(foto));
+                            img.setIcon(new ImageIcon(foto));
+                            SimpleAlert.showMessaje(null, true, "La foto se ha subido con exito");
+                        } else {
+                            SimpleAlert.showMessaje(null, true, "La foto no se ha subido");
+                        }
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    SimpleAlert.showMessaje(null, true, "Archivo no soportado");
+                }
+
+            }
+            docente = cd.obtenerDocente(txtcorreo1.getText());
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments

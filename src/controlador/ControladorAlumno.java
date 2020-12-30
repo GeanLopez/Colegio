@@ -7,6 +7,7 @@ package controlador;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class ControladorAlumno {
         return a;
     }
 
-    public void EditarAlumno(Alumno a) {
+    public void EditarAlumno(Alumno a, int id) {
         Connection conn = null;
         try {
             conn = MySQLConexion.getConexion();
@@ -93,6 +94,7 @@ public class ControladorAlumno {
             st.setString(5, a.getSexo());
             st.setInt(6, a.getDNI());
             st.setDate(7, a.getFecha_Nacimiento());
+            st.setInt(8, id);
             //esa consulta se lleva a memoria
             st.executeUpdate();
             //comenzar a leer filax fila
@@ -109,17 +111,19 @@ public class ControladorAlumno {
         }
     }
 
-    public void CambiarContraseña(String Contraseña) {
+    public void CambiarContraseña(String Contraseña, int idAlumno) {
         Connection conn = null;
         try {
             conn = MySQLConexion.getConexion();
             String sql = "update Alumno set contraseña=? where id_Alumno=?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, Contraseña);
+            st.setInt(2, idAlumno);
             //esa consulta se lleva a memoria
             st.executeUpdate();
             //comenzar a leer filax fila
         } catch (Exception ex) {
+            ex.printStackTrace();
             SimpleAlert.showMessaje(null, true, "Ingrese Bien datos Mierda");
         } finally {
             try {

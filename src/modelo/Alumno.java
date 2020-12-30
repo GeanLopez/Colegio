@@ -23,6 +23,11 @@ public class Alumno extends Persona {
         super(Nombre, Apellido, Correo, Telefono, Sexo, DNI, Id_Tipo, Contraseña, Fecha_Nacimiento, Avatar);
         this.Id_Alumno = Id_Alumno;
     }
+
+    public Alumno() {
+    }
+    
+    
     
 
     public int getId_Alumno() {

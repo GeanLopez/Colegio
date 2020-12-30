@@ -7,6 +7,7 @@ package modelo;
 
 import java.sql.Date;
 
+
 /**
  *
  * @author jampi
@@ -31,6 +32,10 @@ public abstract class Persona {
 
         this.Contraseña = Contraseña;
     }
+
+    public Persona() {
+    }
+    
 
     public Persona(String Nombre, String Apellido, String Correo, int Telefono, String Sexo, int DNI, int Id_Tipo, String Contraseña, Date Fecha_Nacimiento, byte[] Avatar) {
         this.Nombre = Nombre;
