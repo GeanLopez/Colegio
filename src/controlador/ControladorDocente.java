@@ -10,8 +10,12 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import josueemg.SimpleAlert;
 import modelo.Docente;
+import modelo.Alumno;
+import modelo.Mensajeria;
 import util.MySQLConexion;
 
 /**
@@ -31,7 +35,7 @@ public class ControladorDocente {
             st.setString(2, d.getNombre());
             st.setString(3, d.getApellido());
             st.setString(4, d.getCorreo());
-            st.setInt(5, 2);
+          /*ID TIPO DOCENTE ES 2*/  st.setInt(5, 2);
             st.setString(6, d.getContraseña());
 
             //esa consulta se lleva a memoria
@@ -159,6 +163,62 @@ public class ControladorDocente {
         }
         return state;
     }
-    
+  public Docente obtenerDocente(int id) {
+        Docente d = null;
+        Connection conn = null;
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "select * from docente where id_docente= ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, id);
+            //esa consulta se lleva a memoria
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                d = new Docente(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getDate(11), rs.getBytes(12));
+            }
+            //comenzar a leer filax fila
+        } catch (Exception ex) {
+            SimpleAlert.showMessaje(null, true, "Error al Registar Alumno");
+        } finally {
+            try {
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+        return d;
+    }  
+   public List<Alumno> listarAlumno(int idC) {//solo se coloca cuando se necesita buscar un dato, añadir datos, eliminar
+        List<Alumno> lis = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = MySQLConexion.getConexion();
+            String sql = "select a.id_alumno, nombre, apellido from Cursos c, incripciones i, alumno a where c.id_curso=i.id_curso and a.id_alumno=i.id_alumno and i.id_curso=?;";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, idC);
+            ResultSet rs = st.executeQuery();
+            //llenar el arraylist con la clase entidad
+            while (rs.next()) {
+                Alumno a = new Alumno();
+                a.setId_Alumno(rs.getInt(1));
+                a.setNombre(rs.getString(2));
+                a.setApellido(rs.getString(3));
+                lis.add(a);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e2) {
+            }
+        }
+        return lis;
+    }
 }
 

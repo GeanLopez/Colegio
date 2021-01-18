@@ -5,11 +5,8 @@
  */
 package vista;
 
-import modelo.Alumno;
-import modelo.Docente;
-import modelo.Tipo;
-import controlador.ControladorAlumno;
-import controlador.ControladorDocente;
+import modelo.*;
+import controlador.*;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -28,6 +25,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import josueemg.SimpleAlert;
 
 /**
@@ -42,23 +40,87 @@ public class frmMain extends javax.swing.JFrame {
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     ControladorAlumno ca = new ControladorAlumno();
     ControladorDocente cd = new ControladorDocente();
+    ControladorCurso cc = new ControladorCurso();
+    ControladorMensaje cm = new ControladorMensaje();
 
     public frmMain() {
         initComponents();
+        // ListarCurso(alumno.getId_Alumno());
         txtapellido.setEditable(false);
         txtcorreo.setEditable(false);
         txtnombre.setEditable(false); // Falta completar
-        /*if (alumno == null || docente == null) {
+        if (alumno == null && docente == null) {
             frmLogin fl = new frmLogin();
-             this.dispose();
-             fl.setVisible(true);
-           
-        }*/
-        System.out.println("Hoa" + alumno);
+            this.dispose();
+            fl.setVisible(true);
+
+        } else if (alumno != null) {
+            ListarCursoAlu(alumno.getId_Alumno());
+            ListarMensajesAlu(alumno.getId_Alumno());
+            alulis.setVisible(false);
+
+            System.out.println("hola" + alumno.getId_Alumno());
+        } else {
+            ListarCursoDoc(docente.getId_Docente());
+            ListarMensajesDoc(docente.getId_Docente());
+            ListarAlu(cc.obtenerIdCurso(docente.getId_Docente()));
+            vermensaje.setVisible(false);
+            System.out.println("asdas"+cc.obtenerIdCurso(docente.getId_Docente()));
+            miscursos.setVisible(false);
+            System.out.println("hola" + docente.getId_Docente());
+        }
+        //System.out.println("Hoa" + alumno);
         this.setLocationRelativeTo(null);
         VentanaVerPerfil.setVisible(false);
         VentanaEditarPerfil.setVisible(false);
+        VerCursos.setVisible(false);
+        VerMensajes.setVisible(false);
+        LisAlu.setVisible(false);
+    }
 
+    void ListarCursoAlu(int codAlu) {
+        DefaultTableModel dt = (DefaultTableModel) tbcurso.getModel();
+        dt.setRowCount(0);
+        for (Curso c : cc.listarCurso(codAlu)) {
+            Object v[] = {c.getId_Curso(), c.getNombre_Curso(), c.getDescripcion(), c.getId_Docente()};
+            dt.addRow(v);
+        }
+    }
+
+    void ListarCursoDoc(int codDoc) {
+        DefaultTableModel dt = (DefaultTableModel) tbcurso.getModel();
+        dt.setRowCount(0);
+        for (Curso c : cc.listarCursoDoc(codDoc)) {
+            Object v[] = {c.getId_Curso(), c.getNombre_Curso(), c.getDescripcion(), c.getId_Docente()};
+            dt.addRow(v);
+        }
+    }
+
+    void ListarMensajesDoc(int codDoc) {
+        DefaultTableModel dt = (DefaultTableModel) tbMensajes.getModel();
+        dt.setRowCount(0);
+        for (Mensajeria m : cm.listarMensajesDocente(codDoc)) {
+            Object v[] = {m.getId_Mensajeria(), m.getMensaje()};
+            dt.addRow(v);
+        }
+    }
+
+    void ListarMensajesAlu(int codAlu) {
+        DefaultTableModel dt = (DefaultTableModel) tbMensajes.getModel();
+        dt.setRowCount(0);
+        for (Mensajeria m : cm.listarMensajesAlumno(codAlu)) {
+            Object v[] = {m.getId_Mensajeria(), m.getMensaje()};
+            dt.addRow(v);
+        }
+    }
+
+    void ListarAlu(int codc) {
+        DefaultTableModel dt = (DefaultTableModel) tabLisAlu.getModel();
+        dt.setRowCount(0);
+        for (Alumno a : cd.listarAlumno(codc)) {
+            Object v[] = {a.getId_Alumno(), a.getNombre(), a.getApellido()};
+            dt.addRow(v);
+        }
     }
 
     public String VecTipo(int id_tipo) {
@@ -103,20 +165,38 @@ public class frmMain extends javax.swing.JFrame {
     //Editar Perfil
 
     void EditarPerfil() {
-        try {
-            img1.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img1.getWidth(), img1.getHeight(), Image.SCALE_DEFAULT)));
-        } catch (IOException ex) {
-            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+        if (alumno != null) {
+            try {
+                img1.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img1.getWidth(), img1.getHeight(), Image.SCALE_DEFAULT)));
+            } catch (IOException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            txtnombre1.setText(alumno.getNombre());
+            txtapellido1.setText(alumno.getApellido());
+            txtcorreo1.setText(alumno.getCorreo());
+            txttelefono1.setText("" + alumno.getTelefono());
+            txtsexo1.setText(alumno.getSexo());
+            txtdni1.setText("" + alumno.getDNI());
+            txttipo1.setText(VecTipo(alumno.getId_Tipo()));
+            DateFechaNacimiento1.setDate(alumno.getFecha_Nacimiento());
+            txtedad1.setText("" + (FechaDif(sd.format(alumno.getFecha_Nacimiento()), sd.format(dt))) / 365);
+        } else {
+            try {
+                img1.setIcon(new ImageIcon(generarImagenCita(docente.getAvatar()).getScaledInstance(img1.getWidth(), img1.getHeight(), Image.SCALE_DEFAULT)));
+            } catch (IOException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            txtnombre1.setText(docente.getNombre());
+            txtapellido1.setText(docente.getApellido());
+            txtcorreo1.setText(docente.getCorreo());
+            txttelefono1.setText("" + docente.getTelefono());
+            txtsexo1.setText(docente.getSexo());
+            txtdni1.setText("" + docente.getDNI());
+            txttipo1.setText(VecTipo(docente.getId_Tipo()));
+            DateFechaNacimiento1.setDate(docente.getFecha_Nacimiento());
+            txtedad1.setText("" + (FechaDif(sd.format(docente.getFecha_Nacimiento()), sd.format(dt))) / 365);
         }
-        txtnombre1.setText(alumno.getNombre());
-        txtapellido1.setText(alumno.getApellido());
-        txtcorreo1.setText(alumno.getCorreo());
-        txttelefono1.setText("" + alumno.getTelefono());
-        txtsexo1.setText(alumno.getSexo());
-        txtdni1.setText("" + alumno.getDNI());
-        txttipo1.setText(VecTipo(alumno.getId_Tipo()));
-        DateFechaNacimiento1.setDate(alumno.getFecha_Nacimiento());
-        txtedad1.setText("" + (FechaDif(sd.format(alumno.getFecha_Nacimiento()), sd.format(dt))) / 365);
     }
 
     /**
@@ -174,21 +254,30 @@ public class frmMain extends javax.swing.JFrame {
         DateFechaNaciemiento = new com.toedter.calendar.JDateChooser();
         VerCursos = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbcurso = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        VerMensajes = new javax.swing.JInternalFrame();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbMensajes = new javax.swing.JTable();
+        LisAlu = new javax.swing.JInternalFrame();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tabLisAlu = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        miscursos = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jMenu5 = new javax.swing.JMenu();
+        jMenu6 = new javax.swing.JMenu();
+        vermensaje = new javax.swing.JMenuItem();
+        alulis = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -245,14 +334,14 @@ public class frmMain extends javax.swing.JFrame {
             .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
                 .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jButton1))
-                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
                         .addGap(37, 37, 37)
                         .addComponent(img1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
                         .addGap(50, 50, 50)
-                        .addComponent(jButton2)))
+                        .addComponent(jButton2))
+                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(jButton1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
@@ -301,52 +390,54 @@ public class frmMain extends javax.swing.JFrame {
         VentanaEditarPerfilLayout.setVerticalGroup(
             VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
                 .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
-                        .addComponent(img1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jButton1))
-                    .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
-                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
-                                .addComponent(txtnombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel16)
-                                    .addComponent(txtapellido1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel17)
-                                    .addComponent(txtcorreo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel18)
-                                    .addComponent(txttelefono1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel19)
-                                    .addComponent(txtsexo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel11)
-                                    .addComponent(txtdni1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel12)
-                                    .addComponent(txttipo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(32, 32, 32)
+                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(VentanaEditarPerfilLayout.createSequentialGroup()
+                                    .addComponent(txtnombre1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel16)
+                                        .addComponent(txtapellido1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel17)
+                                        .addComponent(txtcorreo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel18)
+                                        .addComponent(txttelefono1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel19)
+                                        .addComponent(txtsexo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel11)
+                                        .addComponent(txtdni1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel12)
+                                        .addComponent(txttipo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(img1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(7, 7, 7)
                         .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel13)
                             .addComponent(DateFechaNacimiento1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14)
-                            .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtedad1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton2)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VentanaEditarPerfilLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1)
+                        .addGap(21, 21, 21)))
+                .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel14)
+                    .addGroup(VentanaEditarPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtedad1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addComponent(btnEditarDatos)
                 .addGap(22, 22, 22))
         );
@@ -469,39 +560,49 @@ public class frmMain extends javax.swing.JFrame {
                 .addGroup(VentanaVerPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(txtedad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
 
         VerCursos.setVisible(true);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbcurso.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Cursos", "Descripcion", "Contedio"
+                "Id_Curso", "Cursos", "Descripcion", "Id_Docente"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbcurso);
 
         jLabel1.setText("Buscar:");
 
         jButton3.setText("Ver Contenido del Curso");
 
         jButton4.setText("Ver Notas del Curso");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Foro de Consultas");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout VerCursosLayout = new javax.swing.GroupLayout(VerCursos.getContentPane());
         VerCursos.getContentPane().setLayout(VerCursosLayout);
@@ -519,34 +620,104 @@ public class frmMain extends javax.swing.JFrame {
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42))
+                .addGap(28, 28, 28))
         );
         VerCursosLayout.setVerticalGroup(
             VerCursosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VerCursosLayout.createSequentialGroup()
-                .addContainerGap(60, Short.MAX_VALUE)
+                .addContainerGap(64, Short.MAX_VALUE)
                 .addGroup(VerCursosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(VerCursosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(VerCursosLayout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(VerCursosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(VerCursosLayout.createSequentialGroup()
                         .addGap(70, 70, 70)
                         .addComponent(jButton3)
                         .addGap(39, 39, 39)
                         .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton5)))
-                .addGap(137, 137, 137))
+                        .addGap(36, 36, 36)
+                        .addComponent(jButton5))
+                    .addGroup(VerCursosLayout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(129, 129, 129))
+        );
+
+        VerMensajes.setVisible(true);
+
+        tbMensajes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Id_Mensaje", "Mensaje"
+            }
+        ));
+        jScrollPane2.setViewportView(tbMensajes);
+
+        javax.swing.GroupLayout VerMensajesLayout = new javax.swing.GroupLayout(VerMensajes.getContentPane());
+        VerMensajes.getContentPane().setLayout(VerMensajesLayout);
+        VerMensajesLayout.setHorizontalGroup(
+            VerMensajesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, VerMensajesLayout.createSequentialGroup()
+                .addContainerGap(73, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(55, 55, 55))
+        );
+        VerMensajesLayout.setVerticalGroup(
+            VerMensajesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(VerMensajesLayout.createSequentialGroup()
+                .addGap(82, 82, 82)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(112, Short.MAX_VALUE))
+        );
+
+        LisAlu.setVisible(true);
+
+        tabLisAlu.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Id_Alumno", "Nombre", "Apellido"
+            }
+        ));
+        jScrollPane3.setViewportView(tabLisAlu);
+
+        javax.swing.GroupLayout LisAluLayout = new javax.swing.GroupLayout(LisAlu.getContentPane());
+        LisAlu.getContentPane().setLayout(LisAluLayout);
+        LisAluLayout.setHorizontalGroup(
+            LisAluLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LisAluLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(186, Short.MAX_VALUE))
+        );
+        LisAluLayout.setVerticalGroup(
+            LisAluLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LisAluLayout.createSequentialGroup()
+                .addGap(89, 89, 89)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(232, Short.MAX_VALUE))
         );
 
         jDesktopPane1.setLayer(VentanaEditarPerfil, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(VentanaVerPerfil, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(VerCursos, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(VerMensajes, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(LisAlu, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
@@ -560,6 +731,16 @@ public class frmMain extends javax.swing.JFrame {
                     .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(VerCursos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(VerMensajes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(LisAlu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -571,11 +752,26 @@ public class frmMain extends javax.swing.JFrame {
                     .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(VerCursos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(VerMensajes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jDesktopPane1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(LisAlu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jMenu1.setText("Perfil");
 
         jMenuItem2.setText("Ver Perfil");
+        jMenuItem2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuItem2MouseClicked(evt);
+            }
+        });
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -601,12 +797,17 @@ public class frmMain extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Mis Cursos");
+        miscursos.setText("Mis Cursos");
 
         jMenu4.setText("Ver Cursos");
-        jMenu2.add(jMenu4);
+        jMenu4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu4MouseClicked(evt);
+            }
+        });
+        miscursos.add(jMenu4);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(miscursos);
 
         jMenu3.setText("Notas");
 
@@ -614,6 +815,31 @@ public class frmMain extends javax.swing.JFrame {
         jMenu3.add(jMenu5);
 
         jMenuBar1.add(jMenu3);
+
+        jMenu6.setText("Mensajes");
+
+        vermensaje.setText("Ver Mensaje");
+        vermensaje.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                vermensajeMouseClicked(evt);
+            }
+        });
+        vermensaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                vermensajeActionPerformed(evt);
+            }
+        });
+        jMenu6.add(vermensaje);
+
+        alulis.setText("Listado de Alumnos");
+        alulis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                alulisActionPerformed(evt);
+            }
+        });
+        jMenu6.add(alulis);
+
+        jMenuBar1.add(jMenu6);
 
         setJMenuBar(jMenuBar1);
 
@@ -632,20 +858,38 @@ public class frmMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     void verPerfil() {
-        try {
-            img.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img.getWidth(), img.getHeight(), Image.SCALE_DEFAULT)));
-        } catch (IOException ex) {
-            Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+        if (alumno != null) {
+            try {
+                img.setIcon(new ImageIcon(generarImagenCita(alumno.getAvatar()).getScaledInstance(img.getWidth(), img.getHeight(), Image.SCALE_DEFAULT)));
+            } catch (IOException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            txtnombre.setText(alumno.getNombre());
+            txtapellido.setText(alumno.getApellido());
+            txtcorreo.setText(alumno.getCorreo());
+            txttelefono.setText("" + alumno.getTelefono());
+            txtsexo.setText(alumno.getSexo());
+            txtdni.setText("" + alumno.getDNI());
+            txttipo.setText(VecTipo(alumno.getId_Tipo()));
+            DateFechaNaciemiento.setDate(alumno.getFecha_Nacimiento());
+            txtedad.setText("" + (FechaDif(sd.format(alumno.getFecha_Nacimiento()), sd.format(dt))) / 365);
+        } else {
+            try {
+                img.setIcon(new ImageIcon(generarImagenCita(docente.getAvatar()).getScaledInstance(img.getWidth(), img.getHeight(), Image.SCALE_DEFAULT)));
+            } catch (IOException ex) {
+                Logger.getLogger(frmMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            txtnombre.setText(docente.getNombre());
+            txtapellido.setText(docente.getApellido());
+            txtcorreo.setText(docente.getCorreo());
+            txttelefono.setText("" + docente.getTelefono());
+            txtsexo.setText(docente.getSexo());
+            txtdni.setText("" + docente.getDNI());
+            txttipo.setText(VecTipo(docente.getId_Tipo()));
+            DateFechaNaciemiento.setDate(docente.getFecha_Nacimiento());
+            txtedad.setText("" + (FechaDif(sd.format(docente.getFecha_Nacimiento()), sd.format(dt))) / 365);
         }
-        txtnombre.setText(alumno.getNombre());
-        txtapellido.setText(alumno.getApellido());
-        txtcorreo.setText(alumno.getCorreo());
-        txttelefono.setText("" + alumno.getTelefono());
-        txtsexo.setText(alumno.getSexo());
-        txtdni.setText("" + alumno.getDNI());
-        txttipo.setText(VecTipo(alumno.getId_Tipo()));
-        DateFechaNaciemiento.setDate(alumno.getFecha_Nacimiento());
-        txtedad.setText("" + (FechaDif(sd.format(alumno.getFecha_Nacimiento()), sd.format(dt))) / 365);
     }
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         closeIframes();
@@ -780,6 +1024,83 @@ public class frmMain extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jMenu4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu4MouseClicked
+        closeIframes();
+        VerCursos.setVisible(true);
+
+    }//GEN-LAST:event_jMenu4MouseClicked
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        //Enviando Datos
+        frmNotas.alumno = alumno;
+        int columna = 0;//Declaro a la posicion de la columna
+        try {
+            int fila = tbcurso.getSelectedRow();//Llamo a la fila Seleccionada
+            int id_curso = (int) tbcurso.getValueAt(fila, columna);//Llamo el valor de la tabla
+            frmNotas.id_curso = id_curso;// Mando la variable al frmNotas
+            frmNotas frm = new frmNotas();
+            frm.setVisible(true);
+        } catch (Exception e) {
+            SimpleAlert.showMessaje(null, true, "Seleccione un Fila");
+        }
+
+
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        if (alumno != null) {
+            dgMensajeria.alumno = alumno;
+            int columna = 3;
+            try {
+                int fila = tbcurso.getSelectedRow();
+                int id_docente = (int) tbcurso.getValueAt(fila, columna);
+                dgMensajeria.id_docente = id_docente;
+                dgMensajeria dgm = new dgMensajeria(this, true);
+                dgm.setVisible(true);
+                ListarMensajesAlu(alumno.getId_Alumno());
+            } catch (Exception e) {
+                SimpleAlert.showMessaje(null, true, "Seleccione un Fila");
+            }
+        } else {
+            dgMensajeria.docente = docente;
+
+            int columna = 3;
+            try {
+                int fila = tbcurso.getSelectedRow();
+                int id_alumno = (int) tbcurso.getValueAt(fila, columna);
+                dgMensajeria.id_alumno = id_alumno;
+                dgMensajeria dgm = new dgMensajeria(this, true);
+                dgm.setVisible(true);
+                ListarMensajesDoc(docente.getId_Docente());
+            } catch (Exception e) {
+                SimpleAlert.showMessaje(null, true, "Seleccione un Fila");
+            }
+        }
+
+
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void vermensajeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_vermensajeMouseClicked
+        /* closeIframes();
+        VerMensajes.setVisible(true);
+        System.out.println("hola");*/
+    }//GEN-LAST:event_vermensajeMouseClicked
+
+    private void vermensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vermensajeActionPerformed
+        closeIframes();
+        VerMensajes.setVisible(true);
+        System.out.println("hola");
+    }//GEN-LAST:event_vermensajeActionPerformed
+
+    private void alulisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alulisActionPerformed
+        closeIframes();
+        LisAlu.setVisible(true);
+    }//GEN-LAST:event_alulisActionPerformed
+
+    private void jMenuItem2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem2MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -818,9 +1139,12 @@ public class frmMain extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.toedter.calendar.JDateChooser DateFechaNaciemiento;
     private com.toedter.calendar.JDateChooser DateFechaNacimiento1;
+    private javax.swing.JInternalFrame LisAlu;
     private javax.swing.JInternalFrame VentanaEditarPerfil;
     private javax.swing.JInternalFrame VentanaVerPerfil;
     private javax.swing.JInternalFrame VerCursos;
+    private javax.swing.JInternalFrame VerMensajes;
+    private javax.swing.JMenuItem alulis;
     private javax.swing.JButton btnEditarDatos;
     private javax.swing.JLabel img;
     private javax.swing.JLabel img1;
@@ -850,17 +1174,22 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JMenu miscursos;
+    private javax.swing.JTable tabLisAlu;
+    private javax.swing.JTable tbMensajes;
+    private javax.swing.JTable tbcurso;
     private javax.swing.JTextField txtapellido;
     private javax.swing.JTextField txtapellido1;
     private javax.swing.JTextField txtcorreo;
@@ -877,5 +1206,6 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JTextField txttelefono1;
     private javax.swing.JTextField txttipo;
     private javax.swing.JTextField txttipo1;
+    private javax.swing.JMenuItem vermensaje;
     // End of variables declaration//GEN-END:variables
 }

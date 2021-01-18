@@ -21,6 +21,7 @@ public class frmLogin extends javax.swing.JFrame {
     ControladorLogin cl = new ControladorLogin();
     ControladorAlumno ca = new ControladorAlumno();
     ControladorDocente cd = new ControladorDocente();
+
     /**
      * Creates new form frmLogin
      */
@@ -148,24 +149,30 @@ public class frmLogin extends javax.swing.JFrame {
     private void btnIniciarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesiónActionPerformed
         if (IngreseContraseña.getText().equals("") || IngreseCorreo.equals("")) {
             SimpleAlert.showMessaje(null, true, "Datos Erroneos o Falta Datos");
-        }
-        else {
-           if (cl.LoginAlumno(IngreseCorreo.getText(), IngreseContraseña.getText())) {
+        } else {
+            if (cl.LoginAlumno(IngreseCorreo.getText(), IngreseContraseña.getText())) {
                 Alumno a = ca.obtenerAlumno(IngreseCorreo.getText());
-                frmMain.alumno = a;
-                frmMain frmM = new frmMain();
-                frmM.setVisible(true);
+                //frmMain.alumno = a;
+                //frmMain frmM = new frmMain();
+                //frmM.setVisible(true);
+                frmMenuPrincipal.alumno = a;
+                frmMenuPrincipal frm = new frmMenuPrincipal();
+                frm.setVisible(true);
                 this.dispose();
             } else if (cl.LoginDocente(IngreseCorreo.getText(), IngreseContraseña.getText())) {
                 Docente d = cd.obtenerDocente(IngreseCorreo.getText());
-                frmMain.docente = d;
-                frmMain frmM = new frmMain();
-                frmM.setVisible(true);
+                // frmMain.docente = d;
+                // frmMain frmM = new frmMain();
+                //frmM.setVisible(true);
+                frmMenuPrincipal.docente = d;
+                frmMenuPrincipal frm = new frmMenuPrincipal();
+                frm.setVisible(true);
+                //  System.out.println("hola)"+d.getId_Docente());
                 this.dispose();
             } else {
                 SimpleAlert.showMessaje(null, true, "Datos Erroneos o Falta Datos ");
-            } 
-        }  
+            }
+        }
     }//GEN-LAST:event_btnIniciarSesiónActionPerformed
 
     /**

@@ -28,7 +28,7 @@ public class Docente extends Persona {
     }
 
     public Docente() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     

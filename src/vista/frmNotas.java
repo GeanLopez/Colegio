@@ -5,17 +5,34 @@
  */
 package vista;
 
+import controlador.ControladorNotas;
+import javax.swing.table.DefaultTableModel;
+import modelo.*;
+
 /**
  *
  * @author Jean Pierre
  */
 public class frmNotas extends javax.swing.JFrame {
-
+ControladorNotas cn=new ControladorNotas();
+static Alumno alumno;
+static int id_curso;
     /**
      * Creates new form frmNotas
      */
     public frmNotas() {
         initComponents();
+        TablaNota(alumno.getId_Alumno(),id_curso); 
+        
+    }
+
+    void TablaNota(int codAlu, int codCur) {
+        DefaultTableModel dt = (DefaultTableModel)tbnotas.getModel();
+        dt.setRowCount(0);
+        for(Nota n: cn.listarNotas(codAlu, codCur)){
+            Object v[] = {n.getPC1(), n.getPC2(),n.getEP(),n.getPC3(),n.getEF(),n.Promedio()};//Guarda diferentes Tipos de Datos
+            dt.addRow(v);//Pide el objeto de la tabla intanciado y es mostrado en la tabla
+        }
     }
 
     /**
@@ -28,13 +45,13 @@ public class frmNotas extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbnotas = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbnotas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -49,7 +66,7 @@ public class frmNotas extends javax.swing.JFrame {
                 "Practica 1", "Practica 2", "Examen Parcial", "Practica 3", "Examen Final", "Promedio"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbnotas);
 
         jButton1.setText("Cerrar");
 
@@ -127,6 +144,6 @@ public class frmNotas extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tbnotas;
     // End of variables declaration//GEN-END:variables
 }
